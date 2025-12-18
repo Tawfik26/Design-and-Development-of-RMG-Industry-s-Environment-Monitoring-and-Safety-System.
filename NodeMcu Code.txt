@@ -1,0 +1,85 @@
+#include <dht.h>
+#include <LiquidCrystal_I2C.h>
+#define Threshold 400
+#define DHT11_PIN 6
+
+LiquidCrystal_I2C lcd(0x20, 16, 2);
+dht DHT;
+int MQ2_pin = 7;
+int Flame_pin = 5;
+int buzzerPin = 2;
+
+void setup()
+{
+  lcd.begin();
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(Flame_pin, INPUT);
+  pinMode(MQ2_pin, INPUT);
+  
+}
+
+void loop()
+{
+  /////////////////////////////////////Temprature Value////////////////////////////////
+  int chk = DHT.read11(DHT11_PIN);
+  lcd.setCursor(0,0); 
+  lcd.print("Temp: ");
+  lcd.print(DHT.temperature);
+  lcd.print((char)223);
+  lcd.print("C");
+  lcd.setCursor(0,1);
+  lcd.print("Humidity: ");
+  lcd.print(DHT.humidity);
+  lcd.print("%");
+  delay(10);
+/////////////////////////////////////Flame////////////////////////
+  if (digitalRead(5) == 1 )
+  {
+    lcd.clear();
+    lcd.setCursor(0,1);
+    digitalWrite(buzzerPin, HIGH); // Led ON
+    lcd.print("*Fire  detected*");
+    delay(5000);
+  }
+  else
+  {
+    digitalWrite(buzzerPin, LOW); // Led OFF
+   lcd.print("Humidity: ");
+   lcd.print(DHT.humidity);
+   lcd.print("%");
+  }
+///////////////////////GAS////////////////////////////////
+  if (digitalRead(7) == 1 )
+  {
+    lcd.clear();
+    lcd.setCursor(0,1);
+    digitalWrite(buzzerPin, HIGH); // Led ON
+    lcd.print("*GAS  detected*");
+    delay(5000);
+  }
+  else
+  {
+    digitalWrite(buzzerPin, LOW); // Led OFF
+    lcd.print("Humidity: ");
+    lcd.print(DHT.humidity);
+    lcd.print("%");
+  }
+
+  //////////////////////////////////Temperature Alarm////////////////////////
+  if (DHT.temperature >= 35 )
+  {
+    lcd.clear();
+    lcd.setCursor(0,1);
+    digitalWrite(buzzerPin, HIGH); // Led ON
+    lcd.print("Temperature High");
+    delay(5000);
+  }
+  else
+  {
+    digitalWrite(buzzerPin, LOW); // Led OFF
+   lcd.print("Humidity: ");
+   lcd.print(DHT.humidity);
+   lcd.print("%");
+  }
+  
+}
